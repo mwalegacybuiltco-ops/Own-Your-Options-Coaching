@@ -15,6 +15,7 @@ An installable PWA for the OYO Own Your Options coaching experience.
 - Vision board and journal
 - Daily manifestation cards and gratitude
 - NLP-inspired exercises
+- Expanded premium NLP exercises, card vault, and resource library items for testing
 - Goals and daily actions
 - Whole-life coaching with business and LWA as one pathway inside the broader life compass
 - Free and premium content gates

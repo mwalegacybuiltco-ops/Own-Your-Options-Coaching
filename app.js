@@ -16,19 +16,43 @@ import { getAppLink, isAdminEmail, isPremiumTesterEmail } from "./firebase-confi
 const cards = [
   {
     title: "I choose the option that expands me.",
+    tier: "Free",
     prompt: "What decision would your future self make before noon today?"
   },
   {
     title: "My actions become evidence.",
+    tier: "Free",
     prompt: "Name one tiny action that proves you are becoming her."
   },
   {
     title: "I can be grateful and still want more.",
+    tier: "Free",
     prompt: "What are you receiving today, and what are you ready to create next?"
   },
   {
     title: "My whole life gets to expand.",
+    tier: "Free",
     prompt: "Where do you want more peace, freedom, health, love, or possibility today?"
+  },
+  {
+    title: "My nervous system gets to come with me.",
+    tier: "Premium",
+    prompt: "What action would feel brave and safe enough to take today?"
+  },
+  {
+    title: "I am available for aligned income.",
+    tier: "Premium",
+    prompt: "What business action supports your peace, purpose, and options?"
+  },
+  {
+    title: "I release the identity that keeps me small.",
+    tier: "Premium",
+    prompt: "What old story is no longer allowed to lead your choices?"
+  },
+  {
+    title: "My future self is already practicing through me.",
+    tier: "Premium",
+    prompt: "What would she do in the next 20 minutes without asking fear for permission?"
   }
 ];
 
@@ -77,6 +101,8 @@ const starterState = {
     { text: "Complete one aligned life action", done: true }
   ],
   cardShift: 0,
+  activeExercise: 0,
+  activeResource: 0,
   goals: [
     { title: "Create more peace and freedom", progress: 45, area: "Life" },
     { title: "Deepen daily self-trust", progress: 70, area: "Self" }
@@ -98,13 +124,78 @@ const starterState = {
 };
 
 const resources = [
-  { title: "Own Your Options Starter Map", tier: "Free", type: "Guide" },
-  { title: "Future Self Scripting Prompts", tier: "Free", type: "Workbook" },
-  { title: "NLP Reframe Library", tier: "Premium", type: "Exercises" },
-  { title: "Life Compass Reset", tier: "Free", type: "Whole-life practice" },
-  { title: "LWA Business Pathway", tier: "Premium", type: "Business as one life option" },
-  { title: "Manifestation Card Vault", tier: "Premium", type: "Cards" },
-  { title: "Community Challenge Calendar", tier: "Free", type: "Community" }
+  {
+    title: "Own Your Options Starter Map",
+    tier: "Free",
+    type: "Guide",
+    detail: "A simple map for naming the life option, self-trust option, and next action available today."
+  },
+  {
+    title: "Future Self Scripting Prompts",
+    tier: "Free",
+    type: "Workbook",
+    detail: "Prompts for writing the identity before the result arrives."
+  },
+  {
+    title: "Life Compass Reset",
+    tier: "Free",
+    type: "Whole-life practice",
+    detail: "A reset for peace, body, home, relationships, money, purpose, and future self."
+  },
+  {
+    title: "Community Challenge Calendar",
+    tier: "Free",
+    type: "Community",
+    detail: "A simple weekly rhythm for sharing wins, gratitude, aligned action, and owned options."
+  },
+  {
+    title: "NLP Reframe Library",
+    tier: "Premium",
+    type: "Exercises",
+    detail: "A collection of identity reframes, belief ladders, parts integration prompts, and future pacing practices."
+  },
+  {
+    title: "Belief Ladder Workbook",
+    tier: "Premium",
+    type: "Mindset",
+    detail: "Move from a hard-to-believe desire into bridge thoughts the body can actually hold."
+  },
+  {
+    title: "Future Self Activation Vault",
+    tier: "Premium",
+    type: "Future self",
+    detail: "Deeper prompts for becoming the person before the outside evidence catches up."
+  },
+  {
+    title: "Manifestation Card Vault",
+    tier: "Premium",
+    type: "Cards",
+    detail: "Premium cards for identity, receiving, aligned income, confidence, visibility, and nervous-system safety."
+  },
+  {
+    title: "LWA Business Pathway",
+    tier: "Premium",
+    type: "Business as one life option",
+    detail: "A bridge from life vision into aligned income, invitations, follow-up, and leadership."
+  },
+  {
+    title: "Aligned Income Action List",
+    tier: "Premium",
+    type: "Business",
+    detail: "Simple business actions that support income without abandoning peace, family, health, or purpose."
+  },
+  {
+    title: "Whole-Life Goal Planner",
+    tier: "Premium",
+    type: "Goals",
+    detail: "Plan goals across self, health, relationships, home, money, business, and purpose."
+  },
+  {
+    title: "Premium Community Prompts",
+    tier: "Premium",
+    type: "Community",
+    detail: "Conversation starters for support circles, weekly wins, courage posts, and reflection threads."
+  }
 ];
 
 const nlpExercises = [
@@ -119,6 +210,11 @@ const nlpExercises = [
     body: "Imagine tonight after your aligned action is complete. What did you do first?"
   },
   {
+    title: "State Shift Breath",
+    tier: "Free",
+    body: "Take three slow breaths, name the feeling, then ask: what option is still available while this feeling is here?"
+  },
+  {
     title: "Parts Integration",
     tier: "Premium",
     body: "Let the protective part and the ambitious part each state their positive intent, then choose one integrated action."
@@ -127,8 +223,294 @@ const nlpExercises = [
     title: "Belief Ladder",
     tier: "Premium",
     body: "Move from doubt to believable expansion through five bridge thoughts."
+  },
+  {
+    title: "Anchor the Future Self",
+    tier: "Premium",
+    body: "Choose one future-self feeling, pair it with a hand-on-heart anchor, and rehearse one aligned action from that state."
+  },
+  {
+    title: "Submodalities Shift",
+    tier: "Premium",
+    body: "Picture the limiting belief as an image. Make it smaller, farther away, dimmer, and quieter. Bring the new belief closer, brighter, and warmer."
+  },
+  {
+    title: "Pattern Interrupt",
+    tier: "Premium",
+    body: "When the old spiral starts, stand up, change your posture, say 'new option,' and take one action that proves a new pattern."
+  },
+  {
+    title: "Aligned Income Reframe",
+    tier: "Premium",
+    body: "Replace 'selling is pressure' with 'I am offering an option that may support someone's life.' Then send one clean invitation."
+  },
+  {
+    title: "Evidence Stacking",
+    tier: "Premium",
+    body: "List five moments you already followed through. Let those become evidence that your next action is safe to begin."
+  },
+  {
+    title: "Timeline Preview",
+    tier: "Premium",
+    body: "Imagine yourself 90 days from now after consistent aligned action. Look back and name the first three small moves that mattered."
   }
 ];
+
+const exerciseDetails = {
+  "Identity Reframe": {
+    time: "5 minutes",
+    steps: [
+      "Write the sentence that feels heavy, such as 'I am behind.'",
+      "Ask what identity that sentence is making you practice.",
+      "Rewrite it into an identity you can believe today.",
+      "Choose one action that proves the new identity."
+    ],
+    prompts: [
+      "The old identity I am releasing is...",
+      "The identity I am practicing instead is...",
+      "One piece of evidence I can create today is..."
+    ]
+  },
+  "Future Pacing": {
+    time: "7 minutes",
+    steps: [
+      "Imagine tonight after one aligned action is complete.",
+      "Notice how your body feels when you followed through.",
+      "Look back from that moment and name the first tiny step you took.",
+      "Do that first step now or schedule it."
+    ],
+    prompts: [
+      "Tonight I will feel proud because...",
+      "The first move that made it easier was...",
+      "Future me wants me to remember..."
+    ]
+  },
+  "State Shift Breath": {
+    time: "3 minutes",
+    steps: [
+      "Put one hand on your chest and take three slow breaths.",
+      "Name the feeling without judging it.",
+      "Ask what option is still available while the feeling is here.",
+      "Pick the smallest next move."
+    ],
+    prompts: [
+      "The feeling present right now is...",
+      "The option still available is...",
+      "The kindest next move is..."
+    ]
+  },
+  "Parts Integration": {
+    time: "12 minutes",
+    steps: [
+      "Name the protective part and the ambitious part.",
+      "Let each part say what it is trying to do for you.",
+      "Thank both parts for their positive intent.",
+      "Choose one action that honors safety and growth."
+    ],
+    prompts: [
+      "The protective part wants...",
+      "The ambitious part wants...",
+      "The integrated option is..."
+    ]
+  },
+  "Belief Ladder": {
+    time: "10 minutes",
+    steps: [
+      "Write the belief that feels too big to believe yet.",
+      "Write the current doubt honestly.",
+      "Create five bridge thoughts between doubt and belief.",
+      "Practice the bridge thought that feels most believable."
+    ],
+    prompts: [
+      "The belief I want to grow into is...",
+      "The bridge thought I can believe today is...",
+      "Evidence that supports this is..."
+    ]
+  },
+  "Anchor the Future Self": {
+    time: "8 minutes",
+    steps: [
+      "Choose one feeling your future self carries.",
+      "Create a simple physical anchor, like hand on heart.",
+      "Breathe into that feeling for 30 seconds.",
+      "Take one action while holding the anchor."
+    ],
+    prompts: [
+      "My future self feels...",
+      "When I anchor this feeling, I choose...",
+      "The action I will take from this state is..."
+    ]
+  },
+  "Submodalities Shift": {
+    time: "10 minutes",
+    steps: [
+      "Picture the limiting belief as an image.",
+      "Make it smaller, dimmer, farther away, and quieter.",
+      "Picture the new belief as bright, close, warm, and steady.",
+      "Step into the new image and choose one action."
+    ],
+    prompts: [
+      "The old image looked like...",
+      "The new image feels like...",
+      "The action that matches the new image is..."
+    ]
+  },
+  "Pattern Interrupt": {
+    time: "4 minutes",
+    steps: [
+      "Notice the old spiral as soon as it begins.",
+      "Change posture, stand up, or move locations.",
+      "Say out loud: 'new option.'",
+      "Take one small action that breaks the pattern."
+    ],
+    prompts: [
+      "The old pattern is...",
+      "My interrupt phrase is...",
+      "The action that proves a new pattern is..."
+    ]
+  },
+  "Aligned Income Reframe": {
+    time: "9 minutes",
+    steps: [
+      "Write the sales or invitation thought that feels heavy.",
+      "Reframe selling as offering an option.",
+      "Name who the option may support.",
+      "Send one clean invitation or follow-up."
+    ],
+    prompts: [
+      "The pressure story is...",
+      "The service-based reframe is...",
+      "One person I can invite or follow up with is..."
+    ]
+  },
+  "Evidence Stacking": {
+    time: "6 minutes",
+    steps: [
+      "List five times you followed through, even in small ways.",
+      "Circle the pattern of strength they reveal.",
+      "Turn that pattern into an identity statement.",
+      "Choose one next action from that identity."
+    ],
+    prompts: [
+      "Evidence I already have is...",
+      "This proves I am someone who...",
+      "The next aligned evidence will be..."
+    ]
+  },
+  "Timeline Preview": {
+    time: "12 minutes",
+    steps: [
+      "Imagine yourself 90 days from now.",
+      "Look at your life, body, relationships, money, and purpose.",
+      "Name the three small actions that created the biggest shift.",
+      "Choose the first of those actions today."
+    ],
+    prompts: [
+      "In 90 days I am proud because...",
+      "The three actions that mattered were...",
+      "Today I begin with..."
+    ]
+  }
+};
+
+const resourceDetails = {
+  "Own Your Options Starter Map": {
+    sections: [
+      "Name the life area asking for attention.",
+      "Name the option you are ready to own.",
+      "Choose one action small enough to finish today."
+    ],
+    prompts: ["The area of life I am reclaiming is...", "The option I choose today is..."]
+  },
+  "Future Self Scripting Prompts": {
+    sections: [
+      "Write as the future self who already trusts herself.",
+      "Describe what she no longer negotiates with.",
+      "Name the standards, routines, and relationships she protects."
+    ],
+    prompts: ["Future me wants me to know...", "She chooses this because..."]
+  },
+  "Life Compass Reset": {
+    sections: [
+      "Check peace, body, home, relationships, money, purpose, and future self.",
+      "Score each area from 1 to 10.",
+      "Pick the lowest area and choose one caring action."
+    ],
+    prompts: ["The area needing care is...", "The reset action is..."]
+  },
+  "Community Challenge Calendar": {
+    sections: [
+      "Monday: name the option.",
+      "Wednesday: share evidence.",
+      "Friday: celebrate the owned option."
+    ],
+    prompts: ["This week I am choosing...", "My evidence this week is..."]
+  },
+  "NLP Reframe Library": {
+    sections: [
+      "Use identity reframes when the self-talk is heavy.",
+      "Use belief ladders when the new belief feels too far away.",
+      "Use future pacing when action feels unclear."
+    ],
+    prompts: ["The sentence I am reframing is...", "The new option sentence is..."]
+  },
+  "Belief Ladder Workbook": {
+    sections: [
+      "Start with the honest doubt.",
+      "Build bridge thoughts that feel 5 percent more possible.",
+      "End with an action that creates evidence."
+    ],
+    prompts: ["The current doubt is...", "The believable bridge thought is..."]
+  },
+  "Future Self Activation Vault": {
+    sections: [
+      "Choose a future-self identity.",
+      "Anchor it with breath and posture.",
+      "Act from that identity before the feeling is perfect."
+    ],
+    prompts: ["Future self identity:", "Action from that identity:"]
+  },
+  "Manifestation Card Vault": {
+    sections: [
+      "Pull a premium card.",
+      "Journal the prompt.",
+      "Turn the reflection into one piece of daily evidence."
+    ],
+    prompts: ["The card is showing me...", "The evidence I will create is..."]
+  },
+  "LWA Business Pathway": {
+    sections: [
+      "Clarify the life the business is meant to support.",
+      "Choose one invitation, follow-up, or leadership action.",
+      "Use the LWA link inside Life + Business when ready."
+    ],
+    prompts: ["The life I am building through business is...", "The business action I will take is..."]
+  },
+  "Aligned Income Action List": {
+    sections: [
+      "Send one clean invitation.",
+      "Follow up with one person kindly.",
+      "Share one story of transformation or possibility."
+    ],
+    prompts: ["The invitation I will send is...", "The person I can support is..."]
+  },
+  "Whole-Life Goal Planner": {
+    sections: [
+      "Set one goal for self, body, home, relationships, money, and purpose.",
+      "Pick the goal that would create the most relief.",
+      "Break it into a seven-day action."
+    ],
+    prompts: ["The goal that matters most is...", "The seven-day action is..."]
+  },
+  "Premium Community Prompts": {
+    sections: [
+      "Share one win.",
+      "Ask for support on one option.",
+      "Celebrate one person who owned an option."
+    ],
+    prompts: ["My win is...", "The support I am asking for is..."]
+  }
+};
 
 const coachOptions = [
   {
@@ -235,17 +617,21 @@ function normalizeState(nextState) {
       ? { ...goal, title: "Create more peace and freedom", area: "Life" }
       : goal
   );
+  nextState.activeExercise = Number.isInteger(nextState.activeExercise) ? nextState.activeExercise : 0;
+  nextState.activeResource = Number.isInteger(nextState.activeResource) ? nextState.activeResource : 0;
   return nextState;
 }
 
 function todayCard() {
-  const index = (new Date().getDate() + (state.cardShift || 0)) % cards.length;
-  return cards[index];
+  const availableCards = canAccessPremium() ? cards : cards.filter((card) => card.tier === "Free");
+  const index = (new Date().getDate() + (state.cardShift || 0)) % availableCards.length;
+  return availableCards[index];
 }
 
 function render() {
   app.innerHTML = state.user ? renderApp() : renderLogin();
   bindEvents();
+  scrollChatToBottom();
 }
 
 function renderLoading(message = "Loading OYO Compass...") {
@@ -452,7 +838,7 @@ function renderCoach() {
       <div><span class="card-label">Next Best Step</span><strong>${escapeHtml(growth.nextStep)}</strong></div>
       <button class="btn small" data-view="growth">View Growth Memory</button>
     </section>
-    <section class="module">
+    <section class="module coach-module">
       <div class="chat" id="chatLog">
         ${state.coachMessages
           .map((message) => `<div class="bubble ${message.role}">${escapeHtml(message.text)}</div>`)
@@ -593,17 +979,24 @@ function renderVisionJournal() {
 
 function renderCards() {
   const activeCard = todayCard();
+  const premiumAccess = canAccessPremium();
   return `
     <section class="section-title">
       <div><p class="eyebrow">Daily Manifestation</p><h2>Pull the card, choose the evidence.</h2></div>
-      <button class="btn primary" id="newCard">Refresh Practice</button>
+      <div class="button-row">
+        ${premiumAccess ? `<span class="tag premium">Premium card vault open</span>` : renderPremiumButton("Unlock Card Vault")}
+        <button class="btn primary" id="newCard">Refresh Practice</button>
+      </div>
     </section>
     <section class="module-grid">
       ${cards
         .map(
-          (card, index) => `
+          (card) =>
+            card.tier === "Premium" && !premiumAccess
+              ? renderLockedCard(card.title, "Premium manifestation card")
+              : `
           <div class="prompt-card item">
-            <span class="tag">${card.title === activeCard.title ? "Today" : "Card"}</span>
+            <span class="tag ${card.tier === "Premium" ? "premium" : ""}">${card.title === activeCard.title ? "Today" : card.tier}</span>
             <strong>${escapeHtml(card.title)}</strong>
             <p class="muted">${escapeHtml(card.prompt)}</p>
           </div>`
@@ -623,19 +1016,38 @@ function renderCards() {
 
 function renderExercises() {
   const premiumAccess = canAccessPremium();
+  const activeExercise = getActiveExercise(premiumAccess);
+  const details = exerciseDetails[activeExercise.title] || {};
   return `
     <section class="section-title">
       <div><p class="eyebrow">NLP Inspired Exercises</p><h2>Shift the pattern, then move.</h2></div>
       ${premiumAccess ? `<span class="tag premium">All exercises available</span>` : renderPremiumButton("Unlock Premium")}
     </section>
-    <section class="exercise-grid">
+    <section class="module-grid two">
+      <div class="module practice-detail">
+        <div class="item-header"><div><span class="tag ${activeExercise.tier === "Premium" ? "premium" : ""}">${escapeHtml(activeExercise.tier)}</span><h2>${escapeHtml(activeExercise.title)}</h2></div><span class="muted">${escapeHtml(details.time || "Practice")}</span></div>
+        <p class="muted">${escapeHtml(activeExercise.body)}</p>
+        <div class="steps-list">
+          ${(details.steps || []).map((step, index) => `<div class="step"><span>${index + 1}</span><p>${escapeHtml(step)}</p></div>`).join("")}
+        </div>
+        <div class="prompt-box">
+          <strong>Journal Prompts</strong>
+          ${(details.prompts || []).map((prompt) => `<p>${escapeHtml(prompt)}</p>`).join("")}
+        </div>
+        <button class="btn primary" data-add-exercise="${escapeHtml(activeExercise.title)}">Add To My Actions</button>
+      </div>
+      <div class="module">
+        <h2>Exercise Library</h2>
+        <div class="list">
       ${nlpExercises
-        .map((exercise) =>
+        .map((exercise, index) =>
           exercise.tier === "Premium" && !premiumAccess
             ? renderLockedCard(exercise.title, "Premium exercise")
-            : `<div class="item"><span class="tag ${exercise.tier === "Premium" ? "premium" : ""}">${exercise.tier}</span><strong>${escapeHtml(exercise.title)}</strong><p class="muted">${escapeHtml(exercise.body)}</p></div>`
+            : `<div class="item"><span class="tag ${exercise.tier === "Premium" ? "premium" : ""}">${exercise.tier}</span><strong>${escapeHtml(exercise.title)}</strong><p class="muted">${escapeHtml(exercise.body)}</p><button class="btn small" data-exercise-index="${index}">Open Exercise</button></div>`
         )
         .join("")}
+        </div>
+      </div>
     </section>
   `;
 }
@@ -691,7 +1103,7 @@ function renderBusiness() {
         <div class="list">
           <div class="item"><span class="tag">Step 1</span><strong>Clarify the life you want</strong><p class="muted">What do you want more of: peace, freedom, health, love, confidence, purpose, time, or income?</p></div>
           <div class="item"><span class="tag">Step 2</span><strong>Choose one aligned option</strong><p class="muted">Take a step that supports your nervous system, relationships, wellbeing, and future self.</p></div>
-          ${premiumAccess ? `<div class="item"><span class="tag premium">LWA</span><strong>Explore the LWA pathway</strong><p class="muted">Use the premium pathway only when business-building supports the life you are choosing.</p>${lwaLink ? `<a class="btn primary" href="${escapeHtml(lwaLink)}" target="_blank" rel="noopener">Open LWA Link</a>` : `<p class="muted">Add your LWA link in firebase-config.js.</p>`}</div>` : renderLockedCard("LWA pathway", "Premium life and business resource")}
+          ${premiumAccess ? `<div class="item"><span class="tag premium">LWA</span><strong>Explore the LWA pathway</strong><p class="muted">Use the premium pathway only when business-building supports the life you are choosing.</p>${lwaLink ? `<a class="btn primary" href="${escapeHtml(lwaLink)}" target="_blank" rel="noopener">Open LWA Link</a>` : `<p class="muted">Add your LWA link in Admin > Premium Controls.</p>`}</div>` : renderLockedCard("LWA pathway", "Premium life and business resource")}
         </div>
       </div>
       <div class="module accent">
@@ -705,19 +1117,38 @@ function renderBusiness() {
 
 function renderLibrary() {
   const premiumAccess = canAccessPremium();
+  const activeResource = getActiveResource(premiumAccess);
+  const details = resourceDetails[activeResource.title] || {};
   return `
     <section class="section-title">
       <div><p class="eyebrow">Resource Library</p><h2>Everything has a home.</h2></div>
       ${premiumAccess ? `<span class="tag premium">Premium library open</span>` : renderPremiumButton("Upgrade")}
     </section>
-    <section class="resource-grid">
+    <section class="module-grid two">
+      <div class="module practice-detail">
+        <div class="item-header"><div><span class="tag ${activeResource.tier === "Premium" ? "premium" : ""}">${escapeHtml(activeResource.tier)}</span><h2>${escapeHtml(activeResource.title)}</h2></div><span class="muted">${escapeHtml(activeResource.type)}</span></div>
+        <p class="muted">${escapeHtml(activeResource.detail)}</p>
+        <div class="steps-list">
+          ${(details.sections || []).map((section, index) => `<div class="step"><span>${index + 1}</span><p>${escapeHtml(section)}</p></div>`).join("")}
+        </div>
+        <div class="prompt-box">
+          <strong>Use This Resource</strong>
+          ${(details.prompts || []).map((prompt) => `<p>${escapeHtml(prompt)}</p>`).join("")}
+        </div>
+        <button class="btn primary" data-add-resource="${escapeHtml(activeResource.title)}">Add Resource To Actions</button>
+      </div>
+      <div class="module">
+        <h2>Resource Shelf</h2>
+        <div class="list">
       ${resources
-        .map((resource) =>
+        .map((resource, index) =>
           resource.tier === "Premium" && !premiumAccess
             ? renderLockedCard(resource.title, resource.type)
-            : `<div class="item"><span class="tag ${resource.tier === "Premium" ? "premium" : ""}">${resource.tier}</span><strong>${escapeHtml(resource.title)}</strong><p class="muted">${escapeHtml(resource.type)}</p></div>`
+            : `<div class="item"><span class="tag ${resource.tier === "Premium" ? "premium" : ""}">${resource.tier}</span><strong>${escapeHtml(resource.title)}</strong><p class="muted">${escapeHtml(resource.type)}</p><p class="muted">${escapeHtml(resource.detail)}</p><button class="btn small" data-resource-index="${index}">Open Resource</button></div>`
         )
         .join("")}
+        </div>
+      </div>
     </section>
   `;
 }
@@ -767,14 +1198,14 @@ function renderAdmin() {
       </div>
       <div class="module accent">
         <h2>Premium Controls</h2>
-        <p class="muted">Add or update your premium payment link and LWA link here. Signed-in members can use the premium payment link, and premium/admin users can open the LWA link.</p>
+        <p class="muted">Add or update your premium payment link, LWA link, and free tester access here. Signed-in members can use the premium payment link, and premium/admin/tester users can open the premium areas.</p>
         <label class="field"><span>Premium payment link</span><input id="adminPremiumPayment" value="${escapeHtml(getEffectiveLink("premiumPayment"))}" placeholder="https://your-payment-link.com" /></label>
         <label class="field"><span>LWA link</span><input id="adminLwaLink" value="${escapeHtml(getEffectiveLink("lwa"))}" placeholder="https://your-lwa-link.com" /></label>
         <label class="field"><span>Free premium tester emails</span><textarea id="adminTesterEmails" placeholder="one tester email per line">${escapeHtml(formatEmailList(publicSettings?.premiumTesterEmails))}</textarea></label>
         <p class="muted">Add a tester's sign-in email here, then click Save. They will get premium access for free when they sign in.</p>
         <div class="button-row">
           <button class="btn primary" id="adminSaveSettings">Save Premium Settings</button>
-          <button class="btn" id="adminGrantSelf">Test Premium On My Account</button>
+          <button class="btn" id="adminGrantSelf">Open Premium On My Account</button>
         </div>
       </div>
     </section>
@@ -830,7 +1261,19 @@ function renderPremiumButton(label) {
   if (paymentLink) {
     return `<a class="btn coral" href="${escapeHtml(paymentLink)}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`;
   }
-  return `<button class="btn coral" id="upgradeBtn">${escapeHtml(label)}</button>`;
+  return `<button class="btn coral premiumUnlockBtn" type="button">${escapeHtml(label)}</button>`;
+}
+
+function getActiveExercise(premiumAccess) {
+  const active = nlpExercises[state.activeExercise] || nlpExercises[0];
+  if (active.tier === "Premium" && !premiumAccess) return nlpExercises.find((exercise) => exercise.tier === "Free") || nlpExercises[0];
+  return active;
+}
+
+function getActiveResource(premiumAccess) {
+  const active = resources[state.activeResource] || resources[0];
+  if (active.tier === "Premium" && !premiumAccess) return resources.find((resource) => resource.tier === "Free") || resources[0];
+  return active;
 }
 
 function renderActionList() {
@@ -876,9 +1319,15 @@ function bindEvents() {
     render();
   });
 
-  document.querySelectorAll("#upgradeBtn").forEach((button) => {
+  document.querySelectorAll(".premiumUnlockBtn").forEach((button) => {
     button.addEventListener("click", () => {
-      showAppMessage("Premium access will be managed by the Own Your Options admin or payment setup. Members cannot unlock this themselves.");
+      if (isAdmin()) {
+        state.activeView = "admin";
+        saveState();
+        render();
+        return;
+      }
+      showAppMessage("Premium is not open on this account yet. If this person is testing for you, add their sign-in email under Admin > Free premium tester emails. If they are paying, add your payment link under Admin > Premium payment link.");
     });
   });
 
@@ -912,6 +1361,42 @@ function bindEvents() {
     state.premium = true;
     saveState();
     render();
+  });
+
+  document.querySelectorAll("[data-exercise-index]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.activeExercise = Number(button.dataset.exerciseIndex);
+      saveState();
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-resource-index]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.activeResource = Number(button.dataset.resourceIndex);
+      saveState();
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-add-exercise]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const title = button.dataset.addExercise;
+      state.actions.unshift({ text: `Complete NLP practice: ${title}`, done: false });
+      addEvidence(`Chose NLP practice: ${title}`);
+      saveState();
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-add-resource]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const title = button.dataset.addResource;
+      state.actions.unshift({ text: `Use resource: ${title}`, done: false });
+      addEvidence(`Opened resource: ${title}`);
+      saveState();
+      render();
+    });
   });
 
   document.querySelector("#saveFuture")?.addEventListener("click", () => {
@@ -1015,6 +1500,14 @@ function sendCoachMessage() {
   state.coachMessages.push({ role: "coach", text: coachReply(text) });
   saveState();
   render();
+}
+
+function scrollChatToBottom() {
+  const chat = document.querySelector("#chatLog");
+  if (!chat) return;
+  requestAnimationFrame(() => {
+    chat.scrollTop = chat.scrollHeight;
+  });
 }
 
 async function handleFirebaseSignIn() {

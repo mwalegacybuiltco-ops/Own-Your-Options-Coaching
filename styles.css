@@ -559,12 +559,21 @@ select:focus {
   background: var(--panel-soft);
 }
 
+.coach-module {
+  min-height: min(68vh, 720px);
+  grid-template-rows: minmax(260px, 1fr) auto;
+}
+
 .chat {
   display: grid;
+  align-content: start;
   gap: 12px;
-  max-height: 430px;
+  min-height: 260px;
+  max-height: min(58vh, 620px);
   overflow: auto;
-  padding-right: 4px;
+  padding: 4px 8px 8px 0;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
 }
 
 .bubble {
@@ -666,6 +675,51 @@ select:focus {
   display: grid;
   gap: 8px;
   padding: 14px;
+}
+
+.practice-detail {
+  align-content: start;
+}
+
+.steps-list {
+  display: grid;
+  gap: 10px;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.64);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.step span {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  color: #1b1326;
+  background: var(--gold);
+  border-radius: 50%;
+  font-weight: 900;
+}
+
+.step p,
+.prompt-box p {
+  margin: 0;
+}
+
+.prompt-box {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  background: rgba(7, 59, 58, 0.08);
+  border: 1px solid rgba(7, 59, 58, 0.16);
+  border-radius: 8px;
 }
 
 .item-header {
@@ -830,6 +884,14 @@ select:focus {
 
   .coach-input {
     grid-template-columns: 1fr;
+  }
+
+  .coach-module {
+    min-height: auto;
+  }
+
+  .chat {
+    max-height: 58vh;
   }
 
   .memory-strip {
